@@ -1,7 +1,7 @@
 import requests
 import json
 
-file1 = open('captiol.csv', 'r')
+file1 = open('captial.csv', 'r')
 Lines = file1.readlines()
 
 for line in Lines:
