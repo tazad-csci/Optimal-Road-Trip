@@ -47,11 +47,23 @@ def plot_deg_dist(G):
         count_of_degrees.append(x)
 
         
-    plt.figure(figsize=(9, 6))
+    #Degrees distribution line graph
+    f = plt.figure(1)
     plt.plot(unique_degrees, count_of_degrees)   
     plt.title("Degree Distribution")
     plt.ylabel("Number of Nodes")
     plt.xlabel("Degrees")  
-    plt.show()    
+    f.show()
+    plt.show()
+    
+    #Degrees distribution Histogram
+    g = plt.figure(2)
+    plt.title("Degrees Histogram")
+    plt.ylabel("Count")
+    plt.xlabel("Degrees")        
+    plt.hist([v for k,v in nx.degree(G)])
+    g.show()
+    plt.show()
+
     
 plot_deg_dist(G)  
