@@ -6,106 +6,188 @@
 
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib.cm import ScalarMappable
+from Data import all_routes, capitals
 from Graph import G
+import os 
 
-
+v = list(set(G.nodes))
     
 def Basic_Info(G):
     
     print("\nGraph with {} nodes and {} edges".format(G.number_of_nodes(),G.number_of_edges()))
-    print("Degree of each node in Graph: ", {node:val for (node, val) in G.degree()})
-    print("Maximum Number of Edges in Undirected Graph: ",(G.number_of_nodes() * (G.number_of_nodes() - 1)))  # n(n−1)
+       
     
+def Average_Shortest_Path(G):
     
-def Density(G):    
-    
-    # A number that measures how interconnected a graph is
-    print("Destiny: ", nx.density(G))
+    print("average_shortest_path_length: ", nx.average_shortest_path_length(G,weight='weight'))
 
     
-def Transitivity(G):
+def Average_Clustering(G):
     
     # Ratio of all triangles over possible triangles; measures how interconnected a graph is
-    print('Transitivity:', nx.transitivity(G))  
+    print('Average Clustering:', nx.average_clustering(G,weight='weight'))      
     
-    
-def plot_deg_dist(G):
-    
-    all_degrees = [v for k, v in nx.degree(G)]    #all the degrees
-    unique_degrees = list(set(all_degrees))       #all the unique degrees
 
-    count_of_degrees = []
-    for i in range(0,max(unique_degrees)):
-        x = all_degrees.count(i)
-        count_of_degrees.append(x)
+def Clustering(G):
+    
+    # Ratio of all triangles over possible triangles; measures how interconnected a graph is
+    #print('Clustering:', nx.clustering(G,weight='weight'))  
+    gc = G.subgraph(max(nx.connected_components(G)))
 
-    #Degrees distribution line graph
-    f = plt.figure(1)
-    plt.plot(unique_degrees, count_of_degrees)   
-    plt.title("Degree Distribution")
-    plt.ylabel("Number of Nodes")
-    plt.xlabel("Degrees")  
-    f.show()
-    plt.show()
+    lcc = nx.clustering(G,weight='weight')
     
-    #Degrees distribution Histogram
-    g = plt.figure(2)
-    plt.title("Degrees Histogram")
-    plt.ylabel("Count")
-    plt.xlabel("Degrees")        
-    plt.hist([v for k,v in nx.degree(G)])
-    g.show()
-    plt.show()
-    
-    
-def plot_betweenness_centrality(G):
-    
-    # Run Betweenness Centrality
-    betweenness_dict = nx.betweenness_centrality(G)
-    sorted_betweenness = sorted(betweenness_dict.items(),key=lambda elem: elem[1], reverse=True)
+    cmap = plt.get_cmap('autumn')
+    norm = plt.Normalize(0, max(lcc.values()))
+    node_colors = [cmap(norm(lcc[node])) for node in gc.nodes]
 
-    print('\n\nTop 20 Captials by betweenness centrality')
-    for b in sorted_betweenness[:20]:
-        print(b)
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 4))
+    nx.draw_spring(gc, node_color=node_colors, with_labels=True, ax=ax1)
+    fig.colorbar(ScalarMappable(cmap=cmap, norm=norm), label='Clustering', shrink=0.95, ax=ax1)
+
+    ax2.hist(lcc.values(), bins=10)
+    ax2.set_title('Clustering')
+    ax2.set_xlabel('Clustering')
+    ax2.set_ylabel('Frequency')
     
-    plt.hist(nx.centrality.betweenness_centrality(G).values())
-    plt.title("Betweenness Centrality")
-    plt.show()
-    
-    
-def plot_eigenvector_centrality(G):   
-    
-    
-    print('\nCaptials by eigenvector centrality')
-    most_important_link = nx.eigenvector_centrality(G)
-    for w in sorted(most_important_link, key=most_important_link.get, reverse=True):
-        print(w,most_important_link[w])
+    plt.tight_layout()
+    plt.show()    
     
     
-def plot_degree_centrality(G):    
+def Closeness_Centrality(G):
+    
+    gc = G.subgraph(max(nx.connected_components(G)))
+    lcc = nx.closeness_centrality(G,distance='weight')
+
+    cmap = plt.get_cmap('autumn')
+    norm = plt.Normalize(0, max(lcc.values()))
+    node_colors = [cmap(norm(lcc[node])) for node in gc.nodes]
+    
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 4))
+    nx.draw_spring(gc, node_color=node_colors, with_labels=True, ax=ax1)
+    fig.colorbar(ScalarMappable(cmap=cmap, norm=norm), label='Centrality', shrink=0.95, ax=ax1)
+    
+    ax2.hist(lcc.values(), bins=10)
+    ax2.set_title('Closeness Centrality')
+    ax2.set_xlabel('Closeness')
+    ax2.set_ylabel('Frequency')
+    
+    plt.tight_layout()
+    plt.show()   
     
     
-    print('\nCaptials by degree centrality')
-    most_influential = nx.degree_centrality(G)
-    for w in sorted(most_influential, key=most_influential.get, reverse=True):
-        print(w,most_influential[w])
+def Betweenness_Centrality(G):
+    
+    gc = G.subgraph(max(nx.connected_components(G)))
+    lcc = nx.betweenness_centrality(G,weight='weight')
+
+    cmap = plt.get_cmap('autumn')
+    norm = plt.Normalize(0, max(lcc.values()))
+    node_colors = [cmap(norm(lcc[node])) for node in gc.nodes]
+    
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 4))
+    nx.draw_spring(gc, node_color=node_colors, with_labels=True, ax=ax1)
+    fig.colorbar(ScalarMappable(cmap=cmap, norm=norm), label='Centrality', shrink=0.95, ax=ax1)
+    
+    ax2.hist(lcc.values(), bins=10)
+    ax2.set_title('Betweenness Centrality')
+    ax2.set_xlabel('Betweenness')
+    ax2.set_ylabel('Frequency')
+    
+    plt.tight_layout()
+    plt.show()   
+    
+
+
+    
+def Nearest_Neighbor(starting_captial):
+    
+    G_deep = G.copy()
+    unvisited_capitals = set()
+    path = [starting_captial]
+    mileage = 0
+    
+    for i in v:
+        if i != starting_captial:
+            unvisited_capitals.add(i)
+
+    current_captial = starting_captial
+    
+    for i in range(0,len(unvisited_capitals)):
+
+        list_of_edges = list(G_deep.edges(current_captial, data="weight"))            
+        nearest_neighbor = min(list_of_edges, key = lambda t: t[2])
         
-    plt.hist(nx.degree_centrality(G).values())
-    plt.title("Degree Centrality")
-    plt.show()
+        mileage = mileage + nearest_neighbor[2]        
 
+        for i in unvisited_capitals:
+            G_deep.remove_edge(current_captial, i)
+        
+        
+        current_captial = nearest_neighbor[1]
+        path.append(current_captial)
+        unvisited_capitals.remove(current_captial)
+           
+    index1 = 0
+    index2 = 1
+    
+    while (index2 != 49):
+        info = all_routes[path[index1] ][ path[index2] ]
+        route_taken = info[1:]
+        start_dest_capital = capitals[ path[index1] ][0]
+        start_dest_state = capitals[ path[index1] ][1]
+        end_dest_capital = capitals[ path[index2] ][0]
+        end_dest_state = capitals[ path[index2] ][1]
+        
+        
+        #print( 'From {}, {} to {}, {}. ({} miles)\nThe Routes taken are: '.format(start_dest_capital, start_dest_state, end_dest_capital, end_dest_state, info[0]), (' to '.join(route_taken)))
+        #print('\n')
+        index1, index2 = index1+1, index2+1
+                
+        
+    #print('\nStarting from {}, it takes {} miles to travel through all state capitals'.format(capitals[starting_captial][0],mileage))
+    
+    return mileage
+
+    
+    
+def Mileage(G):
+    
+    capital_miles = []
+    list_capitals = list(G.nodes)
+
+    for capital in G.nodes:
+
+        miles = Nearest_Neighbor(capital)
+        capital_miles.append(miles)
+        
+
+    
+    
+    x = list_capitals
+    y = capital_miles
+    plt.bar(x,y,color=['black', 'red', 'green', 'blue', 'cyan'])
+
+    plt.title("Total Mileage To Travel")
+    plt.xlabel('States')
+    plt.ylabel("Miles")
+    plt.show()
+    
     
 def main():
     
     Basic_Info(G)
-    Density(G)
-    Transitivity(G)
-    plot_deg_dist(G) 
-    plot_betweenness_centrality(G)
-    plot_eigenvector_centrality(G)
-    plot_degree_centrality(G)
+    Clustering(G)
+    Average_Clustering(G)
+    Average_Shortest_Path(G)
+    Closeness_Centrality(G)   
+    Betweenness_Centrality(G)
+    Mileage(G)
+    os.system('Interface.py')
 
-
+    print('----------------------------------------------------------------------')
+    
 if __name__ == '__main__':
     main()
+    
     
