@@ -26,7 +26,6 @@ for source in list(all_routes):
 # Plot the figure
 #weight = nx.get_edge_attributes(G, 'weight')
 #nx.draw_networkx_edge_labels(G,pos=pos, edge_labels=weight)
-
 plt.figure(figsize=(25,25))
 plt.title("Complete Graph of US Capitals")
 pos = nx.spring_layout(G, seed=675)
