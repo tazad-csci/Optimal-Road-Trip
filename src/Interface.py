@@ -1,19 +1,25 @@
 import sys
-from tkinter import *
-from tkinter import ttk
-import time
-from datetime import datetime
 from Data import all_routes, capitals
-from Graph import G
 from tkinter import scrolledtext
+from tkinter import *
+from Graph import G
 
-now= datetime.now()
 v = list(set(G.nodes))
 
 a = Tk()
 
 a.geometry('250x250')
 a.configure(background="#35424a")
+a.title(string='')
+
+frame = LabelFrame(
+    a,
+    text='State Capital Road Trip',
+    bg='#f0f0f0',
+    font=(20)
+)
+frame.pack(expand=True, fill=BOTH)
+
 
 #Entry widget object
 textin = StringVar()
@@ -63,9 +69,9 @@ def clk():
         index1, index2 = index1+1, index2+1
         
                 
-        statement2 =  statement2 +  'From {}, {} to {}, {}. ({} miles)\nThe Routes taken are: {} \n\n'.format(start_dest_capital, start_dest_state, end_dest_capital, end_dest_state, info[0],route_taken)
+        statement2 =  statement2 +  'From {}, {} to {}, {}. ({} miles)\nThe routes taken are: {} \n\n'.format(start_dest_capital, start_dest_state, end_dest_capital, end_dest_state, info[0],route_taken)
 
-    statement = statement + 'Starting from {}, it takes {} miles to travel through all state capitals'.format(capitals[starting_captial][0],mileage)    
+    statement = statement + 'Starting from {}, {} it takes approximately {} miles to travel through all 49 state capitals'.format(capitals[starting_captial][0], capitals[starting_captial][1], mileage)    
      
     statement = statement + statement2    
     output.insert(0.0,statement)
@@ -79,18 +85,31 @@ def clear_text():
     but.config(state='normal')
     but2.config(state='disabled')
 
+def quit():
+    print("Have a great day! Goodbye :)")
+    sys.exit(0)
 
+    
+
+l1 = Label(a,text="Enter State (abbreviate) you would like to start at:")
+l1.place(x=25,y=35)    
+    
 #Entry field
 ent=Entry(a,width=15,font=('Times 18'),textvar=textin,bg='white')
-ent.place(x=40,y=15)
+ent.place(x=30,y=60)
 
 #Search button
-but=Button(a,padx=1,pady=1,text='Start',command=clk,bg='powder blue')
-but.place(x=240,y=20)
+but=Button(a, padx=1, pady=1, text='Start Trip', command=clk, bg='powder blue')
+but.place(x=240,y=60)
 
 #Clear button
-but2=Button(a,padx=1,pady=1,text='Clear Text',command=clear_text,bg='powder blue')
-but2.place(x=280,y=20)
+but2=Button(a, padx=1, pady=1, text='Clear Text', command=clear_text, bg='powder blue')
+but2.place(x=305,y=60)
+
+#Exit button
+btn3 = Button(a,padx=1,pady=1, text="Exit", command=quit, bg='powder blue')
+btn3.place(x=375,y=60)              
+
 
 #output field
 output=Text(a,width=15,height=4,font=('Times 18'),fg="black")
