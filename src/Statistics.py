@@ -35,6 +35,13 @@ def Clustering(G):
     #print('Clustering:', nx.clustering(G,weight='weight'))  
     gc = G.subgraph(max(nx.connected_components(G)))
 
+    closeness_dict = nx.clustering(G,weight='weight')
+    sorted_closeness = sorted(closeness_dict.items(), key=lambda elem: elem[1], reverse=True)
+    
+    print('\nTop 20 Capitals by clustering')
+    for b in sorted_closeness[:20]:
+        print(b)
+    
     lcc = nx.clustering(G,weight='weight')
     
     cmap = plt.get_cmap('autumn')
@@ -59,6 +66,14 @@ def Closeness_Centrality(G):
     gc = G.subgraph(max(nx.connected_components(G)))
     lcc = nx.closeness_centrality(G,distance='weight')
 
+    closeness_dict = nx.closeness_centrality(G,distance='weight')
+    sorted_closeness = sorted(closeness_dict.items(), key=lambda elem: elem[1], reverse=True)
+    
+    print('\nTop 20 Capitals by closeness')
+    for b in sorted_closeness[:20]:
+        print(b)
+    
+    
     cmap = plt.get_cmap('autumn')
     norm = plt.Normalize(0, max(lcc.values()))
     node_colors = [cmap(norm(lcc[node])) for node in gc.nodes]
@@ -190,4 +205,7 @@ def main():
 if __name__ == '__main__':
     main()
     
+    
+
+        
     
