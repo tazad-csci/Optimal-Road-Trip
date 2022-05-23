@@ -155,13 +155,10 @@ def Nearest_Neighbor(starting_captial):
         end_dest_state = capitals[ path[index2] ][1]
         
         
-        #print( 'From {}, {} to {}, {}. ({} miles)\nThe Routes taken are: '.format(start_dest_capital, start_dest_state, end_dest_capital, end_dest_state, info[0]), (' to '.join(route_taken)))
-        #print('\n')
+    
         index1, index2 = index1+1, index2+1
                 
-        
-    #print('\nStarting from {}, it takes {} miles to travel through all state capitals'.format(capitals[starting_captial][0],mileage))
-    
+            
     return mileage
 
     
@@ -174,10 +171,7 @@ def Mileage(G):
     for capital in G.nodes:
 
         miles = Nearest_Neighbor(capital)
-        capital_miles.append(miles)
-        
-
-    
+        capital_miles.append(miles)    
     
     x = list_capitals
     y = capital_miles
@@ -204,8 +198,4 @@ def main():
     
 if __name__ == '__main__':
     main()
-    
-    
-
-        
     
